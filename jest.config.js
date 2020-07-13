@@ -1,5 +1,3 @@
-
-
 module.exports = {
   roots: ['<rootDir>/src'],
   collectCoverageFrom: ['<rootDir>/src/**/*.ts'],
@@ -9,5 +7,4 @@ module.exports = {
   transform: {
     '.+\\.tss': 'ts-jest'
   }
-
 };
