@@ -1,6 +1,6 @@
 import { SignUpController } from './signup'
 import { EmailValidator } from '../protocols/email-validator'
-import { ServerError, MissingParamError, InvalidParamError } from '../errors'
+import { ServerError, MissingParamError, InvalidParamError, PasswordNotMatching } from '../errors'
 
 interface SutType {
   sut: SignUpController
@@ -139,5 +139,22 @@ describe('Signup Controller', () => {
     const httpResponse = sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
+  })
+
+  test('should fail at email confirmation', () => {
+    const { sut } = makeSut()
+
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'invalid_email@email.com',
+        password: 'any_password',
+        passwordConfirmation: 'wrong_password'
+      }
+    }
+
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(400)
+    expect(httpResponse.body).toEqual(new PasswordNotMatching())
   })
 })
