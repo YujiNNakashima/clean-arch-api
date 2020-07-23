@@ -1,5 +1,5 @@
 import { HttpRequest, HttpResponse, Controller, EmailValidator, AddAccount } from './signup-protocols'
-import { ServerError, MissingParamError, InvalidParamError, PasswordNotMatching } from '../../errors'
+import { MissingParamError, InvalidParamError, PasswordNotMatching } from '../../errors'
 import { badRequest, serverError, ok } from '../../helpers/http-helper'
 
 export class SignUpController implements Controller {
@@ -40,7 +40,7 @@ export class SignUpController implements Controller {
 
       return ok(account)
     } catch (error) {
-      return serverError(new ServerError())
+      return serverError()
     }
   }
 }
