@@ -1,6 +1,5 @@
-import express from 'express'
+import app from './config/app'
 
-const app = express()
 app.listen(5050, () => {
   console.log('server running at 5050')
 })
