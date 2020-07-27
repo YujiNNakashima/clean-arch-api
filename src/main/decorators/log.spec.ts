@@ -9,6 +9,12 @@ interface SutStyles {
   logErrorRepositoryStub: LogErrorRepository
 }
 
+const makeFakeServerError = (): HttpResponse => {
+  const fakeError = new Error()
+  fakeError.stack = 'any_stack'
+  return serverError(fakeError)
+}
+
 const makeLogErrorRepositoryStub = (): LogErrorRepository => {
   class LogErrorRepositoryStub implements LogErrorRepository {
     async log (_error: string): Promise<void> {
@@ -86,9 +92,7 @@ describe('Log Decorator', () => {
 
   test('should call LogErrorRepository with correct error if controller returns a server error ', async () => {
     const { sut, controllerStub, logErrorRepositoryStub } = makeSut()
-    const fakeError = new Error()
-    fakeError.stack = 'any_stack'
-    const error = serverError(fakeError)
+    const error = makeFakeServerError()
     const logSpy = jest.spyOn(logErrorRepositoryStub, 'log')
     jest.spyOn(controllerStub, 'handle').mockReturnValueOnce(new Promise(resolve => resolve(error)))
 
