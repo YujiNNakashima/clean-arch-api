@@ -1,24 +1,42 @@
 import { Controller, HttpResponse, HttpRequest } from '../../presentation/protocols'
 import { LogControllerDecorator } from './log'
 
+interface SutStyles {
+  sut: LogControllerDecorator
+  controllerStub: Controller
+}
+
+const makeController = (): Controller => {
+  class ControllerStub implements Controller {
+    async handle (param: HttpRequest): Promise<HttpResponse> {
+      const httpResponse: HttpResponse = {
+        statusCode: 200,
+        body: {
+          name: 'Fulano'
+        }
+      }
+      return new Promise(resolve => resolve(httpResponse))
+    }
+  }
+
+  return new ControllerStub()
+}
+
+const makeSut = (): SutStyles => {
+  const controllerStub = makeController()
+  const sut = new LogControllerDecorator(controllerStub)
+
+  return {
+    sut,
+    controllerStub
+  }
+}
+
 describe('Log Decorator', () => {
   test('should call controller handle', async () => {
-    // mock controller
-    class ControllerStub implements Controller {
-      async handle (param: HttpRequest): Promise<HttpResponse> {
-        const httpResponse: HttpResponse = {
-          statusCode: 200,
-          body: {
-            name: 'Fulano'
-          }
-        }
-        return new Promise(resolve => resolve(httpResponse))
-      }
-    }
+    const { sut, controllerStub } = makeSut()
 
-    const controllerStub = new ControllerStub()
     const handleSpy = jest.spyOn(controllerStub, 'handle')
-    const sut = new LogControllerDecorator(controllerStub)
     const httpRequest: HttpRequest = {
       body: {
         email: 'mail@mail.com',
@@ -29,5 +47,25 @@ describe('Log Decorator', () => {
     }
     await sut.handle(httpRequest)
     expect(handleSpy).toHaveBeenCalledWith(httpRequest)
+  })
+
+  test('should return the same result of the controller', async () => {
+    const { sut } = makeSut()
+
+    const httpRequest: HttpRequest = {
+      body: {
+        email: 'mail@mail.com',
+        name: 'any_name',
+        password: 'any_password',
+        passwordConfirmation: 'any_password'
+      }
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse).toEqual({
+      statusCode: 200,
+      body: {
+        name: 'Fulano'
+      }
+    })
   })
 })
