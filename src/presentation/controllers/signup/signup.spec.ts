@@ -1,6 +1,7 @@
 import { SignUpController } from './signup'
-import { ServerError, MissingParamError, InvalidParamError, PasswordNotMatching } from '../../errors'
+import { MissingParamError, InvalidParamError, PasswordNotMatching } from '../../errors'
 import { EmailValidator, AddAccountModel, AddAccount, AccountModel } from './signup-protocols'
+import { serverError } from '../../helpers/http-helper'
 
 interface SutType {
   sut: SignUpController
@@ -159,7 +160,7 @@ describe('Signup Controller', () => {
 
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
-    expect(httpResponse.body).toEqual(new ServerError())
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 
   test('should fail at email confirmation', async () => {
@@ -219,7 +220,7 @@ describe('Signup Controller', () => {
 
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
-    expect(httpResponse.body).toEqual(new ServerError())
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 
   test('should return 200 if account is created', async () => {
