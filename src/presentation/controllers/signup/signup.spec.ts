@@ -1,5 +1,5 @@
 import { SignUpController } from './signup'
-import { InvalidParamError, PasswordNotMatching } from '../../errors'
+import { InvalidParamError } from '../../errors'
 import { EmailValidator, AddAccountModel, AddAccount, AccountModel, HttpRequest, Validation } from './signup-protocols'
 import { serverError, badRequest } from '../../helpers/http-helper'
 
@@ -108,23 +108,6 @@ describe('Signup Controller', () => {
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse).toEqual(serverError(new Error()))
-  })
-
-  test('should fail at email confirmation', async () => {
-    const { sut } = makeSut()
-
-    const httpRequest = {
-      body: {
-        name: 'any_name',
-        email: 'invalid_email@email.com',
-        password: 'any_password',
-        passwordConfirmation: 'wrong_password'
-      }
-    }
-
-    const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new PasswordNotMatching())
   })
 
   test('should call AddAccount with correct values', async () => {
