@@ -1,4 +1,4 @@
-import { SignUpController } from './signup'
+import { SignUpController } from './signup-controller'
 import { AddAccountModel, AddAccount, AccountModel, HttpRequest, Validation } from './signup-protocols'
 import { serverError, badRequest } from '../../helpers/http/http-helper'
 
