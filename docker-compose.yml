@@ -12,11 +12,14 @@ services:
     container_name: api-container
     build: .
     restart: always
+    command: npm run debug
     image: clean-node-api
     command: npm start
     volumes:
-      - ./dist:/usr/src/clean-node-api/dist
+      - ./dist/:/usr/src/clean-node-api/dist/
+      - ./package.json:/usr/src/clean-node-api/package.json
     ports:
       - "5050:5050"
+      - "9222:9222"
     links:
       - mongo
